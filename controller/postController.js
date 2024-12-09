@@ -17,7 +17,7 @@ const index = (req, res) => {
             data: results,
             counter: results.length
         }
-        
+
         res.status(200).json(responseData)
     })
 
@@ -83,26 +83,19 @@ const update = (req, res) => {
 }
 
 const destroy = (req, res) => {
-    // find the post by slug
-    const singlePost = posts.find(post => post.slug === req.params.slug);
 
-    // check if the user is deleting the correct post
-    if (!singlePost) {
-        return res.status(404).json({ error: 'Post not found' })
-    }
+    const id = req.params.id
 
+    const sql = 'DELETE FROM posts WHERE id = ?'
 
-    // remove the post from the postList
-    const newPosts = posts.filter(post => post.slug !== req.params.slug);
+    connection.query(sql, [id], (err, results) => {
+        if (err) return res.status(500).sjon({ error: err });
 
-    // update the js file
-    fs.writeFileSync('./db/db.js', `module.exports = ${JSON.stringify(newPosts, null, 4)}`)
+        if (results.affectedRows === 0) return res.status(404).json({ error: `404! no post found with this id: ${id}` });
 
-    // return the updated postList item
-    res.status(201).json({
-        status: 201,
-        data: newPosts
+        return res.json({ status: 204, affectedRows: results.affectedRows})
     })
+    
 }
 
 
