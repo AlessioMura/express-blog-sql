@@ -4,7 +4,10 @@ const cors = require('cors')
 const postsRouter = require('./router/posts.js');
 const notFoundMiddleware = require('./middlewares/notFound.js');
 const loggerMiddleware =require('./middlewares/loggerMiddleware.js');
-const connection = require('./db/sql_db.js')
+
+
+
+
 
 app.use(express.json());
 
