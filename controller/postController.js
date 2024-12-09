@@ -25,9 +25,22 @@ const index = (req, res) => {
 }
 
 const show = (req, res) => {
-    const singlePost = posts.find(post => post.id === req.params.id);
-    return res.json({
-        data: singlePost
+    const id = req.params.id
+
+    const sql = 'SELECT * FROM posts WHERE id = ?'
+
+    connection.query(sql, [id], (err, results) => {
+        if (err) return res.status(500).json({ error: err });
+
+        if (!results[0]) return res.status(404).json({ error: `404! Not Found` })
+
+
+        const responseData = {
+            data: results[0]
+        }
+
+        res.status(200).json(responseData)
+
     })
 }
 
@@ -89,13 +102,13 @@ const destroy = (req, res) => {
     const sql = 'DELETE FROM posts WHERE id = ?'
 
     connection.query(sql, [id], (err, results) => {
-        if (err) return res.status(500).sjon({ error: err });
+        if (err) return res.status(500).json({ error: err });
 
         if (results.affectedRows === 0) return res.status(404).json({ error: `404! no post found with this id: ${id}` });
 
-        return res.json({ status: 204, affectedRows: results.affectedRows})
+        return res.json({ status: 204, affectedRows: results.affectedRows })
     })
-    
+
 }
 
 
